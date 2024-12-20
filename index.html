@@ -3,44 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>checking</title>
+    <title>Arrival & Departure</title>
 </head>
 <body>
     <h1>Redirecting...</h1>
+    <script>
+        // Function to extract URL parameters (like ?phone=2347039285593)
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
 
-<script>
-    function getQueryParam(param){
-        const urlParams = new URLSearchParams(window.location.search);
-        return urlParams.get(param);
-    }
+        // Get the phone number from the URL parameter
+        const phoneNumber = getQueryParam('phone');
+        
+        // Check if the phone number exists
+        if (!phoneNumber) {
+            document.body.innerHTML = '<h1>Error: No phone number provided in the URL.</h1>';
+            throw new Error('No phone number found in the URL.');
+        }
 
-    // Get the phone number from url parameter
-    const phoneNumber = getQueryParam('phone');
+        // Messages for arrival and departure
+        const arrivalMessage = 'I have arrived at the location.';
+        const departureMessage = 'I am departing from the location.';
 
-    if(!phoneNumber){
-        document.body.innerHTML='<h1>Error: No phone number found </h1>';
-        throw new Error('No phone number found')
-    }
+        // Check if a "visit" count is stored in the browser's local storage
+        let visitCount = localStorage.getItem('visitCount');
 
-    //Messages for arrival and departure
-    const arrivalMessage = 'I just resumed to school.';
-    const departureMessage = 'I am leaving the school now.';
-
-    //Checking if a visit is stored
-    let visitCount = localStorage.getItem('visitCount');
-    
-    //If visitCount does not exist
-    if (!visitCount){
-        visitCount = 1;
-        localStorage.setItem('visitCount', visitCount); //stores visit count
-        //redirect to whatsapp arrival message
-        window.location.href='http://wa.me/${phoneNumber}?text=${encodeURIComponent(arrivalMessage)}';
-    } else{
-        //on second scan
-        localStorage.removeItem('visitCount');
-        //redirect to whatapp as departure
-        window.location.href='http://wa.me/${phoneNumber}?text=${encodeURIComponent(departureMessage)}';
-    }
-</script>
+        // If visitCount does not exist, this is the first time the user scans
+        if (!visitCount) {
+            visitCount = 1;
+            localStorage.setItem('visitCount', visitCount); // Store visit count
+            // Redirect to the WhatsApp arrival message
+            window.location.href = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(arrivalMessage)}`;
+        } else {
+            // On second (or subsequent) scans, send the departure message
+            localStorage.removeItem('visitCount'); // Reset so it works as a toggle
+            // Redirect to the WhatsApp departure message
+            window.location.href = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(departureMessage)}`;
+        }
+    </script>
 </body>
 </html>

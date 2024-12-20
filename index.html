@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>checking</title>
+</head>
+<body>
+    <h1>Redirecting...</h1>
+
+<script>
+    function getQueryParam(param){
+        const urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+    }
+
+    // Get the phone number from url parameter
+    const phoneNumber = getQueryParam('phone');
+
+    if(!phoneNumber){
+        document.body.innerHTML='<h1>Error: No phone number found </h1>';
+        throw new Error('No phone number found')
+    }
+
+    //Messages for arrival and departure
+    const arrivalMessage = 'I just resumed to school.';
+    const departureMessage = 'I am leaving the school now.';
+
+    //Checking if a visit is stored
+    let visitCount = localStorage.getItem('visitCount');
+    
+    //If visitCount does not exist
+    if (!visitCount){
+        visitCount = 1;
+        localStorage.setItem('visitCount', visitCount); //stores visit count
+        //redirect to whatsapp arrival message
+        window.location.href='http://wa.me/${phoneNumber}?text=${encodeURIComponent(arrivalMessage)}';
+    } else{
+        //on second scan
+        localStorage.removeItem('visitCount');
+        //redirect to whatapp as departure
+        window.location.href='http://wa.me/${phoneNumber}?text=${encodeURIComponent(departureMessage)}';
+    }
+</script>
+</body>
+</html>

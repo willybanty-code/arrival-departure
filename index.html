@@ -8,37 +8,40 @@
 <body>
     <h1>Redirecting...</h1>
     <script>
-        // Function to extract URL parameters (like ?phone=2347039285593)
+        // List of allowed phone numbers
+        const allowedPhoneNumbers = ["2347039285593", "2348012345678"];
+
+        // Function to extract URL parameters
         function getQueryParam(param) {
             const urlParams = new URLSearchParams(window.location.search);
             return urlParams.get(param);
         }
 
         // Get the phone number from the URL parameter
-        const phoneNumber = getQueryParam('phone');
-        
-        // Check if the phone number exists
-        if (!phoneNumber) {
-            document.body.innerHTML = '<h1>Error: No phone number provided in the URL.</h1>';
-            throw new Error('No phone number found in the URL.');
+        const phoneNumber = getQueryParam("phone");
+
+        // Validate the phone number
+        if (!phoneNumber || !allowedPhoneNumbers.includes(phoneNumber)) {
+            document.body.innerHTML = '<h1>Access Denied: Unauthorized phone number.</h1>';
+            throw new Error("Unauthorized access");
         }
 
         // Messages for arrival and departure
-        const arrivalMessage = 'I have arrived at the location.';
-        const departureMessage = 'I am departing from the location.';
+        const arrivalMessage = "I have arrived at the location.";
+        const departureMessage = "I am departing from the location.";
 
         // Check if a "visit" count is stored in the browser's local storage
-        let visitCount = localStorage.getItem('visitCount');
+        let visitCount = localStorage.getItem("visitCount");
 
         // If visitCount does not exist, this is the first time the user scans
         if (!visitCount) {
             visitCount = 1;
-            localStorage.setItem('visitCount', visitCount); // Store visit count
+            localStorage.setItem("visitCount", visitCount); // Store visit count
             // Redirect to the WhatsApp arrival message
             window.location.href = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(arrivalMessage)}`;
         } else {
             // On second (or subsequent) scans, send the departure message
-            localStorage.removeItem('visitCount'); // Reset so it works as a toggle
+            localStorage.removeItem("visitCount"); // Reset so it works as a toggle
             // Redirect to the WhatsApp departure message
             window.location.href = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(departureMessage)}`;
         }

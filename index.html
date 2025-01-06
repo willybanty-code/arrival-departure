@@ -11,6 +11,10 @@
             const phoneNumber = urlParams.get('phone');
             const studentID = urlParams.get('id');
 
+            // Log parameters for debugging
+            console.log('Phone:', phoneNumber);
+            console.log('Student ID:', studentID);
+
             // Validate parameters
             if (!phoneNumber || !studentID) {
                 alert('Missing phone number or student ID in QR code!');
@@ -37,6 +41,7 @@
 
             // Redirect to WhatsApp with the appropriate message
             const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(messageForWhatsApp)}`;
+            console.log('Redirecting to:', whatsappURL);
             window.location.href = whatsappURL;
         });
     </script>

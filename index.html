@@ -6,25 +6,32 @@
     <title>School Attendance</title>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // Define student ID
-            const studentID = '123456'; // Replace with the actual student ID
-            const phoneNumber = '2347039285593'; // Replace with the actual phone number
+            // Get phone number and student ID from URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            const phoneNumber = urlParams.get('phone');
+            const studentID = urlParams.get('id');
+
+            // Validate parameters
+            if (!phoneNumber || !studentID) {
+                alert('Missing phone number or student ID in QR code!');
+                return;
+            }
 
             // Define messages
             const resumedMessage = `Student with ID ${studentID} has just resumed school.`;
             const leavingMessage = `Student with ID ${studentID} is just leaving school.`;
 
             // Check localStorage for visit count
-            let visitCount = localStorage.getItem('visitCount');
+            let visitCount = localStorage.getItem(`visitCount-${studentID}`);
             let messageForWhatsApp = '';
 
             if (!visitCount) {
                 // First scan: Resumed message
-                localStorage.setItem('visitCount', '1');
+                localStorage.setItem(`visitCount-${studentID}`, '1');
                 messageForWhatsApp = resumedMessage;
             } else {
                 // Second scan: Leaving message
-                localStorage.removeItem('visitCount');
+                localStorage.removeItem(`visitCount-${studentID}`);
                 messageForWhatsApp = leavingMessage;
             }
 
